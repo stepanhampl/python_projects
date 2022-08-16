@@ -1,1 +1,1 @@
-These are projects, which I created, to learn programing in Python.
+These are projects, which I created, to learn programming in Python.
