@@ -4,8 +4,10 @@ from classes import *
 def run_game():
     width = int(input("Insert desired width of gamefield: "))
     height = int(input("Insert desired height of gamefield: "))
-    playfield = Field((width, height))  # dimensions # init of playfield
-    main_game_loop(playfield, ('X', 'O'))
+    how_many_to_win = 3     # how many do you need to have in a row to win
+    players = ('X', 'O')        # probably can be more than 2
+    playfield = Field((width, height), how_many_to_win, players)  # dimensions # init of playfield
+    main_game_loop(playfield, players)
 
 
 def keep_going(playfield, players):
@@ -39,7 +41,6 @@ def main_game_loop(playfield, players):
             if not keep_going(playfield, players):
                 print(playfield.render())  # newly rendered playfield is printed
                 return
-
 
 
 run_game()

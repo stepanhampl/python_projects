@@ -1,9 +1,35 @@
-class Field:  # grid
+class Evaluate():     # find winner
 
-    def __init__(self, dimensions: tuple[int, int]):  # accepts dimensions
+    def __init__(self, rows, players):
+        self.rows = rows
+        self.players = players
+
+    def horizontal(self):
+        return False
+
+    def vertical(self):
+        return False
+
+    def diagonal(self):
+        return False
+
+    def total(self):
+        """brings all poossible ways to win into one method.
+        False if nobody won"""
+        if ((win := self.horizontal()) or (win := self.vertical) or (win := self.diagonal())):
+            return win      # returns character, that won
+        else:
+            return False
+
+
+class Field():      # grid
+
+    def __init__(self, dimensions: tuple[int, int], how_many_to_win, players):  # accepts dimensions
         """checks inputed tuple and creates placeholder - two-dimensional list, besides creating object"""
         self.width = dimensions[0]
         self.height = dimensions[1]
+        self.goal = how_many_to_win
+        self.players = players
 
         if self.width > 30 and self.width < 3 or self.height > 99 and self.height < 3:
             # width: because it wouldnt fit in window...
@@ -21,7 +47,14 @@ class Field:  # grid
         True if game goes on; 
         'X' or 'O' if there is a winner; 
         False if it is a draw (full field, but no one wins)."""
-        if True not in [True for row in self.rows if ' ' in row]:       # list of Trues, or empty list if gamefield is full
+
+        # winner 
+        eval = Evaluate(self.rows, self.players)
+        if winner := eval.total() != False:     # if there is a winner
+            return winner
+
+        # list of Trues, or empty list if gamefield is full
+        if True not in [True for row in self.rows if ' ' in row]:
             return False
         return True   # just for now
 
@@ -57,14 +90,16 @@ class Field:  # grid
         else:
             return False
 
-    def add_move(self, location: tuple[int, int], which: str):      # False if loop should stop
+    # False if loop should stop
+    def add_move(self, location: tuple[int, int], which: str):
         """inserts move into 'rows' list, but if move is invalid returns string with reason 
         (it means if box is full or out of range), otherwise False"""
         x = location[0]     # x-axis
         y = location[1]     # y-axis
-        validate = self.validate_move(x, y)     # False if box is empty and exists
+        # False if box is empty and exists
+        validate = self.validate_move(x, y)
         if not validate:    # box is empty and exists
-            self.rows[y - 1][x - 1 : x] = which
+            self.rows[y - 1][x - 1: x] = which
         return validate
 
 
