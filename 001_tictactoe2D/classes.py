@@ -21,6 +21,8 @@ class Field:  # grid
         True if game goes on; 
         'X' or 'O' if there is a winner; 
         False if it is a draw (full field, but no one wins)."""
+        if True not in [True for row in self.rows if ' ' in row]:       # list of Trues, or empty list if gamefield is full
+            return False
         return True   # just for now
 
     def render(self):

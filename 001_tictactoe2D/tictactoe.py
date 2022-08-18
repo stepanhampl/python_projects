@@ -1,16 +1,28 @@
+from operator import truediv
 from classes import *
-
-
-# append new Sign to list, sort, ren
 
 
 def run_game():
     width = int(input("Insert desired width of gamefield: "))
     height = int(input("Insert desired height of gamefield: "))
     playfield = Field((width, height))  # dimensions # init of playfield
+    main_game_loop(playfield, ('X', 'O'))
 
+
+def keep_going(playfield, players):
+    if status := playfield.status() == True:  # if game goes on
+        return True
+    elif status == False:
+        print("It's a draw")
+        return False
+    elif status in players:
+        print(f"Congratualtions, {status} won")
+        return False
+
+
+def main_game_loop(playfield, players):
     while True:  # while game doesn't end
-        for player in ['X', 'O']:
+        for player in [players[0], players[1]]:
             print(playfield.render())  # newly rendered playfield is printed
             while True:
                 print(f"{player}'s turn:")
@@ -21,12 +33,10 @@ def run_game():
                     print(f'Sorry, {message}.')
                 else:
                     break
-            if status := playfield.status() != True:  # if game ends # if status explicitly doesn't equal True
-                if status == False:
-                    print("It's a draw")
-                else:
-                    print(f"Congratualtions, {status} won")
-                break
+            if not keep_going(playfield, players):
+                print(playfield.render())  # newly rendered playfield is printed
+                return
+
 
 
 run_game()
