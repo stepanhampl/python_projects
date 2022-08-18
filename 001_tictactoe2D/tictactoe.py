@@ -1,4 +1,3 @@
-from operator import truediv
 from classes import *
 
 
@@ -20,19 +19,23 @@ def keep_going(playfield, players):
         return False
 
 
+def get_and_use_input(player, playfield):
+    while True:
+        print(f"{player}'s turn:")
+        x_axis = int(input('Where on x-axis?'))
+        y_axis = int(input('Where on y-axis?'))
+        # False if box is full, otherwise True # saves player's move - it will be shown by the next playfield.render()
+        if message := playfield.add_move((x_axis, y_axis), player):
+            print(f'Sorry, {message}.')
+        else:
+            break
+
+
 def main_game_loop(playfield, players):
     while True:  # while game doesn't end
         for player in [players[0], players[1]]:
             print(playfield.render())  # newly rendered playfield is printed
-            while True:
-                print(f"{player}'s turn:")
-                x_axis = int(input('Where on x-axis?'))
-                y_axis = int(input('Where on y-axis?'))
-                # False if box is full, otherwise True # saves player's move - it will be shown by the next playfield.render()
-                if message := playfield.add_move((x_axis, y_axis), player):
-                    print(f'Sorry, {message}.')
-                else:
-                    break
+            get_and_use_input(player, playfield)
             if not keep_going(playfield, players):
                 print(playfield.render())  # newly rendered playfield is printed
                 return
