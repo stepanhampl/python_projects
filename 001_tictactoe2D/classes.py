@@ -1,30 +1,48 @@
 class Evaluate():     # find winner
 
-    def __init__(self, rows, players):
-        self.rows = rows
-        self.players = players
+    def __init__(self, rows, players, goal):
+        """just for inputing data (what values search for, list to search in, how many need to be in a row)"""
+        self.rows = rows            # list to search in
+        self.players = players      # what values to search for
+        self.goal = goal
 
     def horizontal(self):
+        """checks for horizontal row with specified length made by one player"""
+        for row in self.rows:
+            for box in row:
+                in_a_row = 0     # stores, how many same letters are in a row
+                for i in range(1, self.goal):       # when self.goal = 3, range is 2
+                    if box == row[i]:
+                        in_a_row += 1
+                # if there is at least {self.goal} in a row starting with current box
+                if in_a_row >= self.goal:
+                    return box
+
         return False
 
     def vertical(self):
+        """checks for vertical row with specified length made by one player"""
         return False
 
     def diagonal(self):
+        """checks for diagonal row with specified length made by one player"""
         return False
 
     def total(self):
         """brings all poossible ways to win into one method.
         False if nobody won"""
-        if ((win := self.horizontal()) or (win := self.vertical) or (win := self.diagonal())):
+        if ((win := self.horizontal()) or (win := self.vertical()) or (win := self.diagonal())):
+            print('debugWIN: ' + win)
             return win      # returns character, that won
         else:
             return False
+            # return False
 
 
 class Field():      # grid
 
-    def __init__(self, dimensions: tuple[int, int], how_many_to_win, players):  # accepts dimensions
+    # accepts dimensions
+    def __init__(self, dimensions: tuple[int, int], how_many_to_win, players):
         """checks inputed tuple and creates placeholder - two-dimensional list, besides creating object"""
         self.width = dimensions[0]
         self.height = dimensions[1]
@@ -48,11 +66,12 @@ class Field():      # grid
         'X' or 'O' if there is a winner; 
         False if it is a draw (full field, but no one wins)."""
 
-        # winner 
-        eval = Evaluate(self.rows, self.players)
-        if winner := eval.total() != False:     # if there is a winner
+        # winner
+        eval = Evaluate(self.rows, self.players, self.goal)
+        winner = eval.total()
+        print('debugWINNER: ' + str(winner))
+        if winner:     # if there is a winner
             return winner
-
         # list of Trues, or empty list if gamefield is full
         if True not in [True for row in self.rows if ' ' in row]:
             return False

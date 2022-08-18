@@ -11,12 +11,16 @@ def run_game():
 
 
 def keep_going(playfield, players):
-    if status := playfield.status() == True:  # if game goes on
-        return True
-    elif status == False:
+    status = playfield.status()
+    if status == True:  # if game goes on
+        print('debugSTATUS1: ' + str(status))
+        return True     # go on
+    elif status == False: 
+        print('debugSTATUS2: ' + str(status))
         print("It's a draw")
         return False
     elif status in players:
+        print('debugSTATUS3: ' + str(status))
         print(f"Congratualtions, {status} won")
         return False
 
