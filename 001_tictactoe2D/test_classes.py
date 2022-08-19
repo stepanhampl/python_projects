@@ -40,3 +40,4 @@ def test_status():
     goal = 5
     winner = 'X'
     players = ('X', 'O')
+    assist_status(dimensions, winner, players, goal, rows)

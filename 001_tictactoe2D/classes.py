@@ -9,15 +9,29 @@ class Evaluate():     # find winner
     def horizontal(self):
         """checks for horizontal row with specified length made by one player"""
         for row in self.rows:
-            for index, box in enumerate(row[:len(row)-(self.goal-1)]):     # if goal is 3, two last will not be used in this for loop
-
-                if row[index+1:index+(self.goal)] == [box] *(self.goal-1):        # if goal is 3, compares box with next 2 items
+            # if goal is 3, two last will not be used in this for loop
+            for index, box in enumerate(row[:len(row)-(self.goal-1)]):
+                if box not in self.players:     # if box is " "
+                    continue        # go for next box
+                # if goal is 3, compares box with next 2 items
+                if row[index+1:index+(self.goal)] == [box] * (self.goal-1):
                     return box      # equals to one of the players
 
         return False
 
     def vertical(self):
         """checks for vertical row with specified length made by one player"""
+        # # skip last rows (self.goal - 1), because below them are not enough items to form column {self.goal}-items long
+        # for i_row, row in enumerate(self.rows[:len(row)-(self.goal-1)]):      
+        #     for i_box, box in enumerate(row):
+        #         has_won = True
+        #         # starting at 1, because first box doesnt count - boxes after it are compared directly with it
+        #         for i in range(1, self.goal):
+        #             if box != self.rows[i_row + 1][i_box]:     # if the first box is NOT the same as some of the boxes below
+        #                 has_won = False     # is overriden, when something below is not the same
+        #         if has_won:
+        #             return box
+
         return False
 
     def diagonal(self):
