@@ -10,39 +10,70 @@ class Evaluate():     # find winner
         """checks for horizontal row with specified length made by one player"""
         for row in self.rows:
             # if goal is 3, two last will not be used in this for loop
-            for index, box in enumerate(row[:len(row)-(self.goal-1)]):
+            for ibox, box in enumerate(row[:len(row)-(self.goal-1)]):
                 if box not in self.players:     # if box is " "
                     continue        # go for next box
                 # if goal is 3, compares box with next 2 items
-                if row[index+1:index+(self.goal)] == [box] * (self.goal-1):
+                if row[ibox+1:ibox+(self.goal)] == [box] * (self.goal-1):
                     return box      # equals to one of the players
 
         return False
 
     def vertical(self):
         """checks for vertical row with specified length made by one player"""
-        # # skip last rows (self.goal - 1), because below them are not enough items to form column {self.goal}-items long
-        # for i_row, row in enumerate(self.rows[:len(row)-(self.goal-1)]):      
-        #     for i_box, box in enumerate(row):
-        #         has_won = True
-        #         # starting at 1, because first box doesnt count - boxes after it are compared directly with it
-        #         for i in range(1, self.goal):
-        #             if box != self.rows[i_row + 1][i_box]:     # if the first box is NOT the same as some of the boxes below
-        #                 has_won = False     # is overriden, when something below is not the same
-        #         if has_won:
-        #             return box
+        # skip last rows (self.goal - 1), because below them are not enough items to form column {self.goal}-items long
+        for irow, row in enumerate(self.rows[:len(self.rows)-(self.goal-1)]):      
+            for ibox, box in enumerate(row):
+                if box not in self.players:     # if box is " "
+                    continue        # go for next box
+                has_won = True
+                # starting at 1, because first box doesnt count - boxes after it are compared directly with it
+                for i in range(1, self.goal):
+                    if box != self.rows[irow + i][ibox]:     # if the first box is NOT the same as some of the boxes below
+                        has_won = False     # is overriden, when something below is not the same
+                if has_won:
+                    return box
 
         return False
 
     def diagonal(self):
-        """checks for diagonal row with specified length made by one player"""
+        """checks for diagonal row with specified length made by one player. 
+        Right direction is default."""
+        # first use normal field, next time flipped one (to test first right way, then left way)
+        for rows2 in (self.rows, self.rows[::-1]):
+            # dont care about {rows2 - 1} last rows, because it wouldn't make sense
+            dont_use_edge = len(rows2) - (self.goal - 1)        # don't use vertically
+            # loop_through = rows2[dont_use_edge:]
+            loop_through = rows2[:dont_use_edge]
+
+            for irow, row in enumerate(loop_through):
+                # if goal is 3, two last will not be used in this for loop # same for horizontal
+                dont_use_edge = len(row) - (self.goal - 1)      # don't use horizontally
+                # loop_through = row[dont_use_edge:]
+                loop_through = row[:dont_use_edge]
+
+                for ibox, box in enumerate(loop_through):
+                    if box not in self.players:     # if box is " "
+                        continue        # go for next box
+                    # if goal is 3, compares box with next 2 items # diagonally, right
+                    has_won = True
+                    
+                    # starting at 1, because first box doesnt count - boxes after it are compared directly with 'box'
+                    for i in range(1, self.goal):
+                        # we need to go below and right, so increment row-index and increment box-index
+                        box2 = rows2[irow + i][ibox + i]
+                        if box != box2:
+                            has_won = False
+                    if has_won:
+                        return box
+
         return False
+
 
     def total(self):
         """brings all poossible ways to win into one method.
         False if nobody won"""
         if ((win := self.horizontal()) or (win := self.vertical()) or (win := self.diagonal())):
-            print('debugWIN: ' + win)
             return win      # returns character, that won
         else:
             return False
@@ -79,7 +110,6 @@ class Field():      # grid
         # winner
         eval = Evaluate(self.rows, self.players, self.goal)
         winner = eval.total()
-        print('debugWINNER: ' + str(winner))
         if winner:     # if there is a winner
             return winner
         # list of Trues, or empty list if gamefield is full

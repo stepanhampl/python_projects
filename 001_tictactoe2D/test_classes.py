@@ -50,7 +50,27 @@ def test_status():
     # almost empty field
     rows = [[' ', 'X', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
     assist_status(dimensions, winner, players, goal, rows)
+    winner = 'X'
+    players = ('X', 'O')
+    goal = 3
+    dimensions = (3, 3)
+    # test horizontal evaluation
+    rows = [['X', 'X', 'X'], ['O', 'X', 'O'], ['O', 'O', 'X']]
+    assist_status(dimensions, winner, players, goal, rows)
+
     # test draw
     winner = False
-    rows = [['O', 'X', 'O'], ['X', 'X', 'O'], ['O', 'O', 'X']]
+    rows = [['O', 'X', 'O'], 
+            ['X', 'X', 'O'], 
+            ['O', 'O', 'X']]
+    assist_status(dimensions, winner, players, goal, rows)
+    # # wide, diagonal, right
+    winner = 'X'
+    players = ('X', 'O')
+    goal = 3
+    dimensions = (6, 3)
+    rows = [[' ', ' ', ' ', 'X', ' ', ' '], [' ', ' ', ' ', ' ', 'X', ' '], [' ', ' ', ' ', ' ', ' ', 'X']]
+    assist_status(dimensions, winner, players, goal, rows)    
+    # wide, diagonal, left
+    rows = [[' ', ' ', ' ', 'X', ' ', ' '], [' ', ' ', 'X', ' ', ' ', ' '], [' ', 'X', ' ', ' ', ' ', ' ']]
     assist_status(dimensions, winner, players, goal, rows)
