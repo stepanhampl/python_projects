@@ -9,14 +9,10 @@ class Evaluate():     # find winner
     def horizontal(self):
         """checks for horizontal row with specified length made by one player"""
         for row in self.rows:
-            for box in row:
-                in_a_row = 0     # stores, how many same letters are in a row
-                for i in range(1, self.goal):       # when self.goal = 3, range is 2
-                    if box == row[i]:
-                        in_a_row += 1
-                # if there is at least {self.goal} in a row starting with current box
-                if in_a_row >= self.goal:
-                    return box
+            for index, box in enumerate(row[:len(row)-(self.goal-1)]):     # if goal is 3, two last will not be used in this for loop
+
+                if row[index+1:index+(self.goal)] == [box] *(self.goal-1):        # if goal is 3, compares box with next 2 items
+                    return box      # equals to one of the players
 
         return False
 
