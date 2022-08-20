@@ -2,12 +2,12 @@ import classes
 
 
 def run_game():
-    width = int(input("Insert desired width of gamefield: "))
-    height = int(input("Insert desired height of gamefield: "))
-    how_win = int(input("How many in a row to win: "))     # how many do you need to have in a row to win
+    width = classes.Tools.int_input_check("Insert desired width of gamefield: ")
+    height = classes.Tools.int_input_check("Insert desired height of gamefield: ")
+    how_win = classes.Tools.int_input_check("How many in a row to win: ")     # how many do you need to have in a row to win
     players = ('X', 'O')        # probably can be more than 2
 
-    valid_input = classes.Field.validate_input((width, height, how_win))
+    valid_input = classes.Tools.validate_input((width, height, how_win))
     playfield = classes.Field(valid_input, players)  # dimensions # init of playfield
     main_game_loop(playfield, players)
 
@@ -27,8 +27,8 @@ def keep_going(playfield, players):
 def get_and_use_input(player, playfield):
     while True:
         print(f"{player}'s turn:")
-        x_axis = int(input('Where on x-axis?'))
-        y_axis = int(input('Where on y-axis?'))
+        x_axis = classes.Tools.int_input_check('Where on x-axis?')
+        y_axis = classes.Tools.int_input_check('Where on y-axis?')
         # False if box is full, otherwise True # saves player's move - it will be shown by the next playfield.render()
         if message := playfield.add_move((x_axis, y_axis), player):
             print(f'Sorry, {message}.')

@@ -22,14 +22,15 @@ class Evaluate():     # find winner
     def vertical(self):
         """checks for vertical row with specified length made by one player"""
         # skip last rows (self.goal - 1), because below them are not enough items to form column {self.goal}-items long
-        for irow, row in enumerate(self.rows[:len(self.rows)-(self.goal-1)]):      
+        for irow, row in enumerate(self.rows[:len(self.rows)-(self.goal-1)]):
             for ibox, box in enumerate(row):
                 if box not in self.players:     # if box is " "
                     continue        # go for next box
                 has_won = True
                 # starting at 1, because first box doesnt count - boxes after it are compared directly with it
                 for i in range(1, self.goal):
-                    if box != self.rows[irow + i][ibox]:     # if the first box is NOT the same as some of the boxes below
+                    # if the first box is NOT the same as some of the boxes below
+                    if box != self.rows[irow + i][ibox]:
                         has_won = False     # is overriden, when something below is not the same
                 if has_won:
                     return box
@@ -42,13 +43,15 @@ class Evaluate():     # find winner
         # first use normal field, next time flipped one (to test first right way, then left way)
         for rows2 in (self.rows, self.rows[::-1]):
             # dont care about {rows2 - 1} last rows, because it wouldn't make sense
-            dont_use_edge = len(rows2) - (self.goal - 1)        # don't use vertically
+            # don't use vertically
+            dont_use_edge = len(rows2) - (self.goal - 1)
             # loop_through = rows2[dont_use_edge:]
             loop_through = rows2[:dont_use_edge]
 
             for irow, row in enumerate(loop_through):
                 # if goal is 3, two last will not be used in this for loop # same for horizontal
-                dont_use_edge = len(row) - (self.goal - 1)      # don't use horizontally
+                # don't use horizontally
+                dont_use_edge = len(row) - (self.goal - 1)
                 # loop_through = row[dont_use_edge:]
                 loop_through = row[:dont_use_edge]
 
@@ -57,7 +60,7 @@ class Evaluate():     # find winner
                         continue        # go for next box
                     # if goal is 3, compares box with next 2 items # diagonally, right
                     has_won = True
-                    
+
                     # starting at 1, because first box doesnt count - boxes after it are compared directly with 'box'
                     for i in range(1, self.goal):
                         # we need to go below and right, so increment row-index and increment box-index
@@ -68,7 +71,6 @@ class Evaluate():     # find winner
                         return box
 
         return False
-
 
     def total(self):
         """brings all poossible ways to win into one method.
@@ -96,26 +98,6 @@ class Field():      # grid
             self.rows.append([' '] * self.width)
         # now    # self.rows = [ [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '] ]
         # later  # self.rows = [ ['X', ' ', ' ', ' '], ['O', 'X', ' ', ' '], [' ', 'X', ' ', 'O'], ['X', ' ', ' ', ' '], [' ', 'O', 'O', ' '] ]
-
-    def validate_input(to_validate):
-        """Checks if input is valid. If not, asks again and again, until it is. Returns valid input"""
-        width = to_validate[0]
-        height = to_validate[1]
-        how_win = to_validate[2]
-
-        w_range = range(3, 30)
-        h_range = range(3, 100)
-
-        while not width in w_range or not height in h_range:
-            print('Sorry, your input was incorrect.')
-            if not width in w_range:
-                width = int(input("Width must be between 3 and 30. Insert width of gamefield: "))
-            if not height in h_range:
-                height = int(input("Height must be between 3 and 100. Insert height of gamefield: "))
-
-        while not how_win <= width and not how_win <= height and how_win > 1:
-            how_win = int(input("'How many in a row to win' must fit into field and bigger than 1. Insert again: "))
-        return (width, height, how_win)
 
     def status(self):
         """Returns status of the game. 
@@ -176,3 +158,48 @@ class Field():      # grid
         if not validate:    # box is empty and exists
             self.rows[y - 1][x - 1: x] = which
         return validate
+
+
+class Tools():
+
+    def int_input_check(placeholder):
+        """Takes input text as argument. Returns integer after possible asking again."""
+        new_text = ''
+        correct = False
+        while not correct:
+            checked = None      # new correct input will be assigned
+            unchecked = input(new_text + placeholder)
+            try:        # is given input an integer?
+                checked = int(unchecked)
+            except:     # is executed if given input is not an integer
+                new_text = '[Must be whole number. Try again.] '
+                # if input is not an integer, next line is not executed (skips to the next iteration)
+                continue
+            return checked
+
+    # def str_input_check(placeholder, max_len == 1):
+    #     """Takes input text as argument. Returns string after possible asking again."""
+
+    #     if input_type == 'str':
+    #         if len(checked) != max_len:
+    #             text1 = f'long {str(max)} characters'
+
+    def validate_input(to_validate):
+        """Checks if input is in correct range. If not, asks again and again, until it is. Returns valid input."""
+        width = to_validate[0]
+        height = to_validate[1]
+        how_win = to_validate[2]
+
+        w_range = range(3, 30)
+        h_range = range(3, 100)
+
+        while not width in w_range or not height in h_range:
+            print('Sorry, your input was incorrect.')
+            if not width in w_range:
+                width = Tools.int_input_check("[Width must be between 3 and 29.] Insert width of gamefield: ")
+            if not height in h_range:
+                height = Tools.int_input_check("[Height must be between 3 and 99.] Insert height of gamefield: ")
+
+        while not how_win <= width and not how_win <= height and how_win > 1:
+            how_win = Tools.int_input_check("['How many in a row to win' must fit into field and bigger than 1.] Insert again: ")
+        return (width, height, how_win)

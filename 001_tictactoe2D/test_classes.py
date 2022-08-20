@@ -81,13 +81,13 @@ def test_validate_input():
     width = 3
     height = 3
     how_win = 1
-    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    assert classes.Tools.validate_input((width, height, how_win)) == (width, height, how_win)
     width = 29
     height = 99
     how_win = 99
-    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    assert classes.Tools.validate_input((width, height, how_win)) == (width, height, how_win)
     width = 10
     height = 10
     how_win = 4
-    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    assert classes.Tools.validate_input((width, height, how_win)) == (width, height, how_win)
     # negative tests impossible because of input inside, needs to be tested manually
