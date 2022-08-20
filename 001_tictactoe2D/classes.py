@@ -92,12 +92,26 @@ class Field():      # grid
         self.goal = valid_input[2]
         self.players = players
 
+        self.create_first_column()
+
         self.rows = []
         for _ in range(self.height):
             # set up 'empty' boxes while init
             self.rows.append([' '] * self.width)
         # now    # self.rows = [ [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '] ]
         # later  # self.rows = [ ['X', ' ', ' ', ' '], ['O', 'X', ' ', ' '], [' ', 'X', ' ', 'O'], ['X', ' ', ' ', ' '], [' ', 'O', 'O', ' '] ]
+
+    def create_first_column(self):
+        alphabet = list('abcdefghijklmnopqrstuvwxyz')
+        first_column = {}
+
+        for i0, letter0 in enumerate([''] + alphabet):
+            for i1, letter1 in enumerate(alphabet):
+                new_index = (i0 * len(alphabet)) + i1
+                if new_index <= self.height:
+                    first_column[new_index] = letter0 + letter1
+
+        self.first_column = first_column
 
     def status(self):
         """Returns status of the game. 
@@ -123,40 +137,45 @@ class Field():      # grid
         header_sequence = [str(num) if len(str(num)) > 1 else ' ' + str(num)
                            for num in header_sequence]   # ['1', '2', '3', '4', '5']
         # 'y, arrow, x, arrow  1) 2) 3) 4) 5)' ...example = row number 0
-        rendered_field = 'Y' + u'\u2193' + 'X' + \
+        rendered_field = ' Y' + u'\u2193' + 'X' + \
             u'\u2192' + ') '.join(header_sequence) + ')\n'
         for i, row in enumerate(rows):         # add each row
             index = i + 1  # so it doesnt start with 0
             # e.g. ' 5)' or '50)' ... second time no space
-            first_col_num = ' ' + str(index) if index < 10 else str(index)
+
+            # first_col_num = ' ' + str(index) if index < 10 else str(index)
+            letter = self.first_column[i]
+            first_col_num = letter if len(letter) == 3 else (
+                ' ' + letter if len(letter) == 2 else '  ' + letter)         # letter(s) at the beginning of the row
             # add box in left column... '1) ' AND add row itself
             rendered_field += first_col_num + ') ' + ' T '.join(row) + '\n'
         return rendered_field
 
     def validate_move(self, x, y):
         """returns True if move can be inserted, otherwise returns False"""
-
         # is in correct range?
-        if y < 1 or len(self.rows) < y:
-            return 'y is out of range'
+        if y not in self.first_column.keys():
+            return 'y is out of range, choose letter(s) from left column'
         if x < 1 or len(self.rows[y - 1]) < x:
             return 'x is out of range'
 
-        if not self.rows[y - 1][x - 1] == ' ':
+        if not self.rows[y][x - 1] == ' ':
             return 'desired box is full'
         else:
             return False
 
     # False if loop should stop
-    def add_move(self, location: tuple[int, int], which: str):
+    def add_move(self, location: tuple[int, str], which: str):
         """inserts move into 'rows' list, but if move is invalid returns string with reason 
         (it means if box is full or out of range), otherwise False"""
         x = location[0]     # x-axis
-        y = location[1]     # y-axis
+        y = location[1]    # y-axis
+        y_key = [key for key, value in self.first_column.items() if value == y][0]     # get key of inputted value from self.first_column
+        
         # False if box is empty and exists
-        validate = self.validate_move(x, y)
+        validate = self.validate_move(x, y_key)
         if not validate:    # box is empty and exists
-            self.rows[y - 1][x - 1: x] = which
+            self.rows[y_key][x - 1: x] = which
         return validate
 
 
@@ -177,12 +196,8 @@ class Tools():
                 continue
             return checked
 
-    # def str_input_check(placeholder, max_len == 1):
+    # def str_input_check(placeholder, max_len = 1):
     #     """Takes input text as argument. Returns string after possible asking again."""
-
-    #     if input_type == 'str':
-    #         if len(checked) != max_len:
-    #             text1 = f'long {str(max)} characters'
 
     def validate_input(to_validate):
         """Checks if input is in correct range. If not, asks again and again, until it is. Returns valid input."""
@@ -196,10 +211,13 @@ class Tools():
         while not width in w_range or not height in h_range:
             print('Sorry, your input was incorrect.')
             if not width in w_range:
-                width = Tools.int_input_check("[Width must be between 3 and 29.] Insert width of gamefield: ")
+                width = Tools.int_input_check(
+                    "[Width must be between 3 and 29.] Insert width of gamefield: ")
             if not height in h_range:
-                height = Tools.int_input_check("[Height must be between 3 and 99.] Insert height of gamefield: ")
+                height = Tools.int_input_check(
+                    "[Height must be between 3 and 99.] Insert height of gamefield: ")
 
         while not how_win <= width and not how_win <= height and how_win > 1:
-            how_win = Tools.int_input_check("['How many in a row to win' must fit into field and bigger than 1.] Insert again: ")
+            how_win = Tools.int_input_check(
+                "['How many in a row to win' must fit into field and bigger than 1.] Insert again: ")
         return (width, height, how_win)
