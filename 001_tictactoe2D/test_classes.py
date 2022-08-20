@@ -4,7 +4,8 @@ import classes
 
 
 def assist_status(dimensions: tuple, winner, players, goal, rows):
-    playfield = classes.Field(dimensions, goal, players)
+    valid_input = (dimensions[0], dimensions[1], goal)
+    playfield = classes.Field(valid_input, players)
     playfield.rows = rows
     status = playfield.status()
     assert status == winner
@@ -74,3 +75,19 @@ def test_status():
     # wide, diagonal, left
     rows = [[' ', ' ', ' ', 'X', ' ', ' '], [' ', ' ', 'X', ' ', ' ', ' '], [' ', 'X', ' ', ' ', ' ', ' ']]
     assist_status(dimensions, winner, players, goal, rows)
+
+def test_validate_input():
+    # positive tests    
+    width = 3
+    height = 3
+    how_win = 1
+    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    width = 29
+    height = 99
+    how_win = 99
+    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    width = 10
+    height = 10
+    how_win = 4
+    assert classes.Field.validate_input((width, height, how_win)) == (width, height, how_win)
+    # negative tests impossible because of input inside, needs to be tested manually

@@ -4,9 +4,11 @@ import classes
 def run_game():
     width = int(input("Insert desired width of gamefield: "))
     height = int(input("Insert desired height of gamefield: "))
-    how_many_to_win = 3     # how many do you need to have in a row to win
+    how_win = int(input("How many in a row to win: "))     # how many do you need to have in a row to win
     players = ('X', 'O')        # probably can be more than 2
-    playfield = classes.Field((width, height), how_many_to_win, players)  # dimensions # init of playfield
+
+    valid_input = classes.Field.validate_input((width, height, how_win))
+    playfield = classes.Field(valid_input, players)  # dimensions # init of playfield
     main_game_loop(playfield, players)
 
 

@@ -83,23 +83,39 @@ class Evaluate():     # find winner
 class Field():      # grid
 
     # accepts dimensions
-    def __init__(self, dimensions: tuple[int, int], how_many_to_win, players):
+    def __init__(self, valid_input: tuple[int, int], players):
         """checks inputed tuple and creates placeholder - two-dimensional list, besides creating object"""
-        self.width = dimensions[0]
-        self.height = dimensions[1]
-        self.goal = how_many_to_win
+        self.width = valid_input[0]
+        self.height = valid_input[1]
+        self.goal = valid_input[2]
         self.players = players
 
-        if self.width > 30 and self.width < 3 or self.height > 99 and self.height < 3:
-            # width: because it wouldnt fit in window...
-            raise Exception(
-                "Sorry, width must be between 3 and 30, height between 3 and 99")
         self.rows = []
         for _ in range(self.height):
             # set up 'empty' boxes while init
             self.rows.append([' '] * self.width)
         # now    # self.rows = [ [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '], [' ', ' ', ' ', ' '] ]
         # later  # self.rows = [ ['X', ' ', ' ', ' '], ['O', 'X', ' ', ' '], [' ', 'X', ' ', 'O'], ['X', ' ', ' ', ' '], [' ', 'O', 'O', ' '] ]
+
+    def validate_input(to_validate):
+        """Checks if input is valid. If not, asks again and again, until it is. Returns valid input"""
+        width = to_validate[0]
+        height = to_validate[1]
+        how_win = to_validate[2]
+
+        w_range = range(3, 30)
+        h_range = range(3, 100)
+
+        while not width in w_range or not height in h_range:
+            print('Sorry, your input was incorrect.')
+            if not width in w_range:
+                width = int(input("Width must be between 3 and 30. Insert width of gamefield: "))
+            if not height in h_range:
+                height = int(input("Height must be between 3 and 100. Insert height of gamefield: "))
+
+        while not how_win <= width and not how_win <= height and how_win > 1:
+            how_win = int(input("'How many in a row to win' must fit into field and bigger than 1. Insert again: "))
+        return (width, height, how_win)
 
     def status(self):
         """Returns status of the game. 
@@ -160,10 +176,3 @@ class Field():      # grid
         if not validate:    # box is empty and exists
             self.rows[y - 1][x - 1: x] = which
         return validate
-
-
-# class Sign(Field):  # both X and O
-#     def __init__(self, location: tuple[int, int], which: str):
-#         x_axis = location[0]
-#         y_axis = location[1]
-#         super().insert_in_rows(x_axis, y_axis)
