@@ -85,7 +85,7 @@ class Evaluate():     # find winner
 class Field():      # grid
 
     # accepts dimensions
-    def __init__(self, valid_input: tuple[int, int], players):
+    def __init__(self, valid_input: tuple, players):
         """checks inputed tuple and creates placeholder - two-dimensional list, besides creating object"""
         self.width = valid_input[0]
         self.height = valid_input[1]
@@ -165,13 +165,17 @@ class Field():      # grid
             return False
 
     # False if loop should stop
-    def add_move(self, location: tuple[int, str], which: str):
+    def add_move(self, location: tuple, which: str):
         """inserts move into 'rows' list, but if move is invalid returns string with reason 
         (it means if box is full or out of range), otherwise False"""
         x = location[0]     # x-axis
         y = location[1]    # y-axis
-        y_key = [key for key, value in self.first_column.items() if value == y][0]     # get key of inputted value from self.first_column
-        
+
+        if y in self.first_column.values():
+            y_key = [key for key, value in self.first_column.items() if value == y][0]     # get key of inputted value from self.first_column
+        else:
+            y_key = -1
+
         # False if box is empty and exists
         validate = self.validate_move(x, y_key)
         if not validate:    # box is empty and exists
@@ -196,8 +200,30 @@ class Tools():
                 continue
             return checked
 
-    # def str_input_check(placeholder, max_len = 1):
-    #     """Takes input text as argument. Returns string after possible asking again."""
+    def input_check(input_type, placeholder, max_len = 1):
+        """Takes input text as argument. Returns string/integer after possible asking again.
+        input_type is either 'integer' or 'string'."""
+        new_text = ''
+        correct = False
+        while not correct:
+            checked = None      # new correct input will be assigned
+            unchecked = input(new_text + placeholder)
+
+            if input_type == 'integer':
+                try:        # is given input an integer?
+                    checked = int(unchecked)
+                except:     # is executed if given input is not an integer
+                    new_text = '[Must be whole number. Try again.] '
+                    # if input is not an integer, next line is not executed (skips to the next iteration)
+                    continue #
+            elif input_type == 'string':
+                if isinstance(unchecked, str):
+                    checked = unchecked.strip()
+                else:
+                    new_text = '[Must be string. Try again.] '
+                    continue #
+            print(checked)
+            return checked
 
     def validate_input(to_validate):
         """Checks if input is in correct range. If not, asks again and again, until it is. Returns valid input."""
@@ -211,13 +237,13 @@ class Tools():
         while not width in w_range or not height in h_range:
             print('Sorry, your input was incorrect.')
             if not width in w_range:
-                width = Tools.int_input_check(
+                width = Tools.input_check('integer',
                     "[Width must be between 3 and 29.] Insert width of gamefield: ")
             if not height in h_range:
-                height = Tools.int_input_check(
+                height = Tools.input_check('integer',
                     "[Height must be between 3 and 99.] Insert height of gamefield: ")
 
         while not how_win <= width and not how_win <= height and how_win > 1:
-            how_win = Tools.int_input_check(
-                "['How many in a row to win' must fit into field and bigger than 1.] Insert again: ")
+            how_win = Tools.input_check('integer',
+                "['How many in a row to win' must fit into field and bigger than 0.] Insert again: ")
         return (width, height, how_win)
