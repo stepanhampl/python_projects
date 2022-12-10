@@ -185,22 +185,7 @@ class Field():      # grid
 
 class Tools():
 
-    def int_input_check(placeholder):
-        """Takes input text as argument. Returns integer after possible asking again."""
-        new_text = ''
-        correct = False
-        while not correct:
-            checked = None      # new correct input will be assigned
-            unchecked = input(new_text + placeholder)
-            try:        # is given input an integer?
-                checked = int(unchecked)
-            except:     # is executed if given input is not an integer
-                new_text = '[Must be whole number. Try again.] '
-                # if input is not an integer, next line is not executed (skips to the next iteration)
-                continue
-            return checked
-
-    def input_check(input_type, placeholder, max_len = 1):
+    def input_check(input_type, placeholder):
         """Takes input text as argument. Returns string/integer after possible asking again.
         input_type is either 'integer' or 'string'."""
         new_text = ''
