@@ -1,4 +1,4 @@
-To play 2D tictactoe, run file tictactoe.py.
+To play 2D tictactoe in command-line, run file tictactoe.py.
 
 Run tests by executing 'python3 -m pytest' in this directory.
 
